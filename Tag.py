@@ -1,4 +1,5 @@
 from mrz.generator.td3 import TD3CodeGenerator
+from mrz.checker.td3 import TD3CodeChecker
 from Crypto.Cipher import AES
 from Crypto.Util.Padding import pad,unpad
 
@@ -24,7 +25,7 @@ def gerar_mrz():
     print("Insira a data de vencimento(YYMMDD):")
     vencimento = input()
     dados = [tipo_de_documento,cod_pais,sobrenome,nome,numero_documento,nacionalidade,nascimento,sexo,vencimento]
-    code = str(TD3CodeGenerator(dados[0],dados[1],dados[2],dados[3],dados[4],dados[5],dados[6],dados[7],dados[8])).replace('\n','').encode()
+    code = str(TD3CodeGenerator(dados[0],dados[1],dados[2],dados[3],dados[4],dados[5],dados[6],dados[7],dados[8])).encode()
     while (len(numero_documento) < 9):
         numero_documento = numero_documento+'0'
     senha_atual = numero_documento+senha
@@ -49,7 +50,8 @@ def ler(arquivo):
     cifra2 = AES.new(senha_atual, AES.MODE_CBC,ler_iv)
     descri = unpad(cifra2.decrypt(ler_cripto), AES.block_size).decode()
     print(descri)
-
+    campos = TD3CodeChecker(descri).fields()
+    print(campos)
 def menu():
     print("Selecione uma opção:\n1-Gravar\n2-Ler\nPara sair digite \"sair\"")
     opcao = input()
